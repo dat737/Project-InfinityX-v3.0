@@ -19,9 +19,9 @@ jobs:
         mkdir -p ~/bin
         curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
         chmod a+x ~/bin/repo
-        echo 'export PATH=~/bin:$PATH' >> $GITHUB_ENV
+        echo "PATH=$HOME/bin:$PATH" >> $GITHUB_ENV
         repo init --depth=1 --no-repo-verify --git-lfs -u https://github.com/ProjectInfinity-X/manifest -b 16 -g default,-mips,-darwin,-notdefault
-        repo sync
+        repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j$(nproc --all)
     - name: Sync tree
       run: | 
         git clone https://github.com/dat737/android_device_xiaomi_xaga.git device/xiaomi/xaga
@@ -39,7 +39,7 @@ jobs:
         git clone https://github.com/dat737/vendor_lineage_config.git vendor/lineage/config
     - name: Build ROM
       run: |
-        repo sync -j100
+        repo sync
         source build/envsetup.sh
         lunch infinity_xaga-userdebug
         mka bacon
