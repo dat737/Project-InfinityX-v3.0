@@ -1,0 +1,26 @@
+name: Build AOSP ROM for Xaga
+
+on:
+  workflow_dispatch:  # Cho phép bạn bấm nút "Run workflow"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Cài công cụ cần thiết
+      run: |
+        sudo apt update
+        sudo apt install git openjdk-17-jdk repo -y
+        git config --global user.name "yourname"
+        git config --global user.email "you@example.com"
+    - name: Tải mã nguồn ROM
+      run: |
+        mkdir rom && cd rom
+        repo init -u https://github.com/ten-manifest-android/android_manifest.git -b android-16
+        repo sync -j2
+    - name: Build ROM
+      run: |
+        cd rom
+        source build/envsetup.sh
+        lunch aosp_xaga-userdebug
+        mka bacon -j2
