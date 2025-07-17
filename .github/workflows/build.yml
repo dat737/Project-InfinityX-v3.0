@@ -13,6 +13,12 @@ jobs:
         sudo apt install git openjdk-17-jdk repo -y
         git config --global user.name pandora
         git config --global user.email pandora
+    - name: Cài repo thủ công (bản mới)
+      run: |
+        mkdir -p ~/bin
+        curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+        chmod a+x ~/bin/repo
+        echo 'export PATH=~/bin:$PATH' >> $GITHUB_ENV
     - name: Tải mã nguồn ROM
       run: |
         mkdir rom && cd rom
