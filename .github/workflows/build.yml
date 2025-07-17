@@ -11,16 +11,31 @@ jobs:
       run: |
         sudo apt update
         sudo apt install git openjdk-17-jdk repo -y
-        git config --global user.name "yourname"
-        git config --global user.email "you@example.com"
+        git config --global user.name pandora
+        git config --global user.email pandora
     - name: Tải mã nguồn ROM
       run: |
         mkdir rom && cd rom
-        repo init -u https://github.com/ten-manifest-android/android_manifest.git -b android-16
-        repo sync -j2
+        repo init --depth=1 --no-repo-verify --git-lfs -u https://github.com/ProjectInfinity-X/manifest -b 16 -g default,-mips,-darwin,-notdefault
+        repo sync -c --no-clone-bundle --no-tags --optimized-fetch --prune --force-sync -j$(nproc --all)
+    - name: Sync tree
+      run: | 
+        git clone https://github.com/dat737/android_device_xiaomi_xaga.git device/xiaomi/xaga
+        git clone https://github.com/XagaForge/android_device_xiaomi_mt6895-common.git device/xiaomi/mt6895-common
+        git clone https://gitlab.com/priiii08918/android_vendor_xiaomi_xaga.git -b 16 vendor/xiaomi/xaga
+        git clone https://github.com/XagaForge/android_vendor_xiaomi_mt6895-common.git vendor/xiaomi/mt6895-common
+        git clone https://github.com/XagaForge/android_kernel_xiaomi_mt6895.git kernel/xiaomi/mt6895
+        git clone https://github.com/XagaForge/android_vendor_mediatek_ims.git vendor/mediatek/ims
+        git clone https://github.com/XagaForge/android_device_mediatek_sepolicy_vndr.git device/mediatek/sepolicy_vndr
+        git clone https://github.com/XagaForge/android_hardware_mediatek.git hardware/mediatek
+        git clone https://github.com/XagaForge/android_hardware_xiaomi.git hardware/xiaomi
+        git clone https://github.com/XagaForge/android_vendor_firmware.git vendor/firmware
+        git clone https://gitlab.com/priiii08918/proprietary_vendor_xiaomi_miuicamera-xaga.git -b 16 vendor/xiaomi/miuicamera-xaga
+        git clone https://github.com/LineageOS/android_prebuilts_clang_kernel_linux-x86_clang-r416183b.git prebuilts/clang/kernel/linux-x86/clang-r416183b 
+        git clone https://github.com/dat737/vendor_lineage_config.git vendor/lineage/config
     - name: Build ROM
       run: |
-        cd rom
+        repo sync -j100
         source build/envsetup.sh
-        lunch aosp_xaga-userdebug
-        mka bacon -j2
+        lunch infinity_xaga-userdebug
+        mka bacon
